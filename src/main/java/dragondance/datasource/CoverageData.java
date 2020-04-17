@@ -335,7 +335,9 @@ public class CoverageData implements AutoCloseable {
 		for (BlockEntry be : source.entries) {
 			
 			addr = imgBase + be.getOffset();
-			codeRange = pushRangeList(codeRange, addr,be.getSize(),true);
+                        if (DragonHelper.getInstructionNoThrow(DragonHelper.getAddress(addr), true) != null) {
+                            codeRange = pushRangeList(codeRange, addr,be.getSize(),true);
+                        }
 		}
 		
 		this.initialRangeCount = this.rangeList.size();
