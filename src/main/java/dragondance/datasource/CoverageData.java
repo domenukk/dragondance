@@ -145,6 +145,9 @@ public class CoverageData implements AutoCloseable {
 		
 		
 		for (List<InstructionInfo> list : covData1.addressMap.values()) {
+                        
+                        if (list.size() == 0)
+                          continue;
 			inst = list.get(0);
 			
 			if (inst != null)
@@ -153,6 +156,8 @@ public class CoverageData implements AutoCloseable {
 		
 		
 		for (List<InstructionInfo> list : covData2.addressMap.values()) {
+                        if (list.size() == 0)
+                          continue;
 			inst = list.get(0);
 			
 			if (inst != null)

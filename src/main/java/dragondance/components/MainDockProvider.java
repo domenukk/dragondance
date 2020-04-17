@@ -10,6 +10,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.FileNotFoundException;
+import java.util.List;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -267,14 +268,16 @@ public class MainDockProvider extends ComponentProvider implements GuiAffectedOp
 		
 		setStatusText("Loading...");
 		
-		if (!coverage.getSource().process()) {
+		if (coverage == null || !coverage.getSource().process()) {
 			DragonHelper.showWarning("%s could not be processed",coverageFile);
 			return null;
 		}
+		setStatusText("Loading2...");
 		
 		try {
 			if (coverage.build()) {
 				
+                          setStatusText("Building...");
 				Runnable postBuildGuiOp = new Runnable() {
 					@Override
 					public void run() {
@@ -289,7 +292,9 @@ public class MainDockProvider extends ComponentProvider implements GuiAffectedOp
 				else
 					DragonHelper.runOnSwingThread(postBuildGuiOp, true);
 	
-			}
+			} else {
+                            setStatusText("Build failure!");
+                        }
 		} catch (InvalidInstructionAddress e1) {
 			
 			session.removeCoverageData(coverage.getSourceId());
@@ -319,13 +324,14 @@ public class MainDockProvider extends ComponentProvider implements GuiAffectedOp
 	
 	
 	private void importCoverageAsync() {
-		String file = DragonHelper.askFile(tool.getToolFrame(),"Select coverage data", "load it up!");
+		List<String> files = DragonHelper.askFiles(tool.getToolFrame(),"Select coverage data", "load it up!");
 		
-		if (file == null)
+		if (files == null || files.size() == 0)
 			return;
 		
 		DragonHelper.queuePoolWorkItem(() -> {
 			try {
+                                for (String file : files)
 				importCoverage(file);
 			} catch (FileNotFoundException e) {
 				DragonHelper.showWarning("File not found");
@@ -440,20 +446,22 @@ public class MainDockProvider extends ComponentProvider implements GuiAffectedOp
 		
 		coverages = getSelectedCoverageObjects();
 		
-		switch (type) {
-		case OMT_INTERSECT:
-			result = CoverageData.intersect(coverages);
-			break;
-		case OMT_DIFF:
-			result = CoverageData.difference(coverages);
-			break;
-		case OMT_DISTINCT:
-			result = CoverageData.distinct(coverages);
-			break;
-		case OMT_SUM:
-			result = CoverageData.sum(coverages);
-			break;
-		}
+                if (coverages != null) {
+                  switch (type) {
+                  case OMT_INTERSECT:
+                          result = CoverageData.intersect(coverages);
+                          break;
+                  case OMT_DIFF:
+                          result = CoverageData.difference(coverages);
+                          break;
+                  case OMT_DISTINCT:
+                          result = CoverageData.distinct(coverages);
+                          break;
+                  case OMT_SUM:
+                          result = CoverageData.sum(coverages);
+                          break;
+                  }
+                }
 		
 		if (result != null) {
 			session.setActiveCoverage(result);
