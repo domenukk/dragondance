@@ -270,6 +270,7 @@ public class DragonHelper {
 		gfc.setTitle(title);
 		gfc.setApproveButtonText(okButtonText);
 		gfc.setFileSelectionMode(GhidraFileChooserMode.FILES_ONLY);
+                gfc.setMultiSelectionEnabled(false);
 		
 		File file = gfc.getSelectedFile();
 		
@@ -286,6 +287,42 @@ public class DragonHelper {
 			Globals.LastFileDialogPath = System.getProperty("user.dir");
 		
 		return file.getAbsolutePath();
+	}
+
+	public static List<String> askFiles(Component parent, String title, String okButtonText) {
+		
+		GhidraFileChooser gfc = new GhidraFileChooser(parent);
+		
+		if (!Globals.LastFileDialogPath.isEmpty()) {
+			File def = new File(Globals.LastFileDialogPath);
+			gfc.setSelectedFile(def);
+		}
+		
+		gfc.setTitle(title);
+		gfc.setApproveButtonText(okButtonText);
+		gfc.setFileSelectionMode(GhidraFileChooserMode.FILES_ONLY);
+                gfc.setMultiSelectionEnabled(true);
+		
+                List<File> files = gfc.getSelectedFiles();
+		
+		if (files == null || files.size() == 0) {
+			return null;
+		}
+
+                List<String> filepaths = new ArrayList<>();
+		
+                for (File f : files ) {
+                  if (!f.exists())
+                          return null;
+                  filepaths.add(f.getAbsolutePath());
+                }
+
+		Globals.LastFileDialogPath =  Util.getDirectoryOfFile(files.get(0).getAbsolutePath());
+		
+		if (Globals.LastFileDialogPath == null)
+			Globals.LastFileDialogPath = System.getProperty("user.dir");
+		
+		return filepaths;
 	}
 	
 	public static AddressSet makeAddressSet(long addr, int size) {
@@ -323,7 +360,7 @@ public class DragonHelper {
 		return getInstruction(addr,throwEx,false);
 	}
 	
-	private static InstructionContext getInstructionNoThrow(Address addr, boolean icall) {
+	public static InstructionContext getInstructionNoThrow(Address addr, boolean icall) {
 		InstructionContext inst = null;
 		
 		try {

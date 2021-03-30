@@ -146,6 +146,9 @@ public class CoverageData implements AutoCloseable {
 		
 		
 		for (List<InstructionInfo> list : covData1.addressMap.values()) {
+                        
+                        if (list.size() == 0)
+                          continue;
 			inst = list.get(0);
 			
 			if (inst != null)
@@ -154,6 +157,8 @@ public class CoverageData implements AutoCloseable {
 		
 		
 		for (List<InstructionInfo> list : covData2.addressMap.values()) {
+                        if (list.size() == 0)
+                          continue;
 			inst = list.get(0);
 			
 			if (inst != null)
@@ -331,11 +336,13 @@ public class CoverageData implements AutoCloseable {
 		for (BlockEntry be : source.entries) {
 			
 			addr = imgBase + be.getOffset();
+
 			try {
 				codeRange = pushRangeList(codeRange, addr, be.getSize(), true);
 			} catch (InvalidInstructionAddress | OperationAbortedException ex) {
 				Log.warning("Ignored invalid instruction at addr %s when building ranges (%s)", Long.toHexString(addr), ex.getMessage());
 			}
+
 		}
 		
 		this.initialRangeCount = this.rangeList.size();
