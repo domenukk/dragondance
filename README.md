@@ -1,5 +1,8 @@
 ﻿# Dragon Dance
 
+## NoCrash Fork...
+This simply ignores all safe-guards against shooting yourself in the foot. Useful if your traces include more instructions than your loaded binary.
+
 ## What is that?
 
 Dragon Dance is a plugin for [Ghidra](https://github.com/NationalSecurityAgency/ghidra) to get visualize and manipulate the binary code coverage data. Coverage data can be imported from the multiple coverage sources. For now the plugin supports Dynamorio and Intel Pin binary instrumentation tools.  Dynamorio has its own coverage collection module called "drcov". Intel Pin does not provide a builtin coverage collector module. To handle the lack of module situation I have to write my own coverage collection module for Intel Pin. So I wrote a coverage collection module for Intel Pin named **ddph** (Dragon Dance Pin Helper). So you can use that. You can view ddph's source from this [link](https://github.com/0ffffffffh/dragondance/tree/master/coveragetools). If you are lazy to compile for your own, you can use the compiled binaries I provided for Windows, macOS and Linux.
