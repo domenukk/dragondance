@@ -378,15 +378,12 @@ public class CodeRange implements AutoCloseable {
 			if (singleInstruction) {
 				insSize = size;
 			} else {
-				try {
-					insSize = getInstructionSizeNoThrow(addr);
-				} catch (InvalidInstructionAddress | OperationAbortedException ex) {
-					Log.warning("Ignored invalid instruction at address in add %s (%s)", Long.toHexString(addr), ex.getMessage());
-				}
+				insSize = getInstructionSizeNoThrow(addr);
 			}
 
 			if (insSize == 0) {
 				//TODO: maybe raise an abort event?
+				Log.warning("Ignored invalid instruction at address in add %s", Long.toHexString(addr));
 				return false;
 			}
 			

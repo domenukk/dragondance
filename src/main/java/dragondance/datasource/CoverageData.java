@@ -337,10 +337,10 @@ public class CoverageData implements AutoCloseable {
 			
 			addr = imgBase + be.getOffset();
 
-			try {
+			if (DragonHelper.getInstructionNoThrow(DragonHelper.getAddress(addr), true) != null) {
 				codeRange = pushRangeList(codeRange, addr, be.getSize(), true);
-			} catch (InvalidInstructionAddress | OperationAbortedException ex) {
-				Log.warning("Ignored invalid instruction at addr %s when building ranges (%s)", Long.toHexString(addr), ex.getMessage());
+			} else {
+				Log.warning("Ignored invalid instruction at addr %s when building ranges", Long.toHexString(addr));
 			}
 
 		}

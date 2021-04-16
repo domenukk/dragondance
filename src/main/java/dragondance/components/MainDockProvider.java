@@ -24,6 +24,7 @@ import docking.action.DockingAction;
 import docking.action.MenuData;
 import docking.action.ToolBarData;
 import docking.widgets.table.GTable;
+import dragondance.Log;
 import dragondance.StringResources;
 import dragondance.datasource.CoverageData;
 import dragondance.datasource.CoverageDataSource;
@@ -353,8 +354,15 @@ public class MainDockProvider extends ComponentProvider implements GuiAffectedOp
 		
 		if (selIndex > -1)
 		{
-			int id = ((Number)dtm.getValueAt(selIndex, 0)).intValue();
-			return id;
+			try {
+				int id = ((Number) dtm.getValueAt(selIndex, 0)).intValue();
+				return id;
+			} catch(Exception e) {
+				Log.warning("Could not cast object as int, trying to parse (%s)", e.getMessage());
+				String val = (String) dtm.getValueAt(selIndex, 0);
+				Log.warning("String is %s", val);
+				return Integer.parseInt(val);
+			}
 		}
 		
 		return 0;
