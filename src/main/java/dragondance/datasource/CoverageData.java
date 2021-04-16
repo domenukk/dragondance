@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+import com.googlecode.d2j.reader.Op;
 import dragondance.Globals;
 import dragondance.Log;
 import dragondance.eng.CodeRange;
@@ -335,12 +336,20 @@ public class CoverageData implements AutoCloseable {
 		for (BlockEntry be : source.entries) {
 			
 			addr = imgBase + be.getOffset();
-                        if (DragonHelper.getInstructionNoThrow(DragonHelper.getAddress(addr), true) != null) {
-                            codeRange = pushRangeList(codeRange, addr,be.getSize(),true);
-                        }
+
+			try {
+				codeRange = pushRangeList(codeRange, addr, be.getSize(), true);
+			} catch (InvalidInstructionAddress | OperationAbortedException ex) {
+				Log.warning("Ignored invalid instruction at addr %s when building ranges (%s)", Long.toHexString(addr), ex.getMessage());
+			}
+
 		}
 		
 		this.initialRangeCount = this.rangeList.size();
+
+		if (this.initialRangeCount == 0) {
+			throw new OperationAbortedException("No valid code ranges found!");
+		}
 		
 		Log.info("%d ranges generated.", this.rangeList.size());
 		Log.info("trying to merge ranges");
