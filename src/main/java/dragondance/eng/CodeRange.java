@@ -118,16 +118,17 @@ public class CodeRange implements AutoCloseable {
 		this.avgInstSize = this.totalInstSize / this.densityList.size();
 	}
 	
-	private int getInstructionSize(long addr) throws InvalidInstructionAddress, OperationAbortedException {
+	private int getInstructionSizeNoThrow(long addr) throws InvalidInstructionAddress, OperationAbortedException {
 		InstructionContext ictx = null;
 		
 		if (Globals.WithoutGhidra)
 			return 4;
 		
-		ictx = DragonHelper.getInstruction(addr,true);
+		ictx = DragonHelper.getInstructionNoThrow(addr, true);
 		
 		if (ictx == null) {
-			throw new OperationAbortedException(String.format("There is no valid instruction at %x",addr));
+			Log.warning("There is no valid instruction at %x", addr);
+			return 0;
 		}
 		
 		return ictx.getSize();
@@ -377,7 +378,7 @@ public class CodeRange implements AutoCloseable {
 			if (singleInstruction)
 				insSize = size;
 			else
-				insSize = getInstructionSize(addr);
+				insSize = getInstructionSizeNoThrow(addr);
 			
 			if (insSize == 0) {
 				//TODO: maybe raise an abort event?
@@ -433,7 +434,7 @@ public class CodeRange implements AutoCloseable {
 		
 		while (true)
 		{
-			instSize = getInstructionSize(currAddr);
+			instSize = getInstructionSizeNoThrow(currAddr);
 			
 			if (instSize == 0)
 			{

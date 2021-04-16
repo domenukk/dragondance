@@ -359,7 +359,11 @@ public class DragonHelper {
 	public static InstructionContext getInstruction(Address addr, boolean throwEx) throws InvalidInstructionAddress {
 		return getInstruction(addr,throwEx,false);
 	}
-	
+
+	public static InstructionContext getInstructionNoThrow(long addr, boolean icall) {
+		return getInstructionNoThrow(fapi.toAddr(addr), icall);
+	}
+
 	public static InstructionContext getInstructionNoThrow(Address addr, boolean icall) {
 		InstructionContext inst = null;
 		
