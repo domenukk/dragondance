@@ -18,7 +18,7 @@ import ghidra.program.model.listing.Program;
 @PluginInfo(
 	status = PluginStatus.STABLE,
 	packageName = DragondancePluginPackage.NAME,
-	category = PluginCategoryNames.MISC,
+	category = PluginCategoryNames.CODE_VIEWER,
 	shortDescription = "code coverage visualizer",
 	description = "this plugin visualizes binary coverage data that are " +
 					"collected by Dynamorio or Intel Pin binary instrumentation tools"
@@ -30,7 +30,7 @@ public class DragondancePlugin extends ProgramPlugin {
 	
 	
 	public DragondancePlugin(PluginTool tool) {
-		super(tool, true, true);
+		super(tool);
 		
 		mainDock = new MainDockProvider(tool,getName());
 		
